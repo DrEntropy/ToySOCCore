@@ -15,12 +15,42 @@ I have made some changes:
 
 * I will probably use the seven segment display to show the current address or the current next TWO words (i.e. 16 bits.) NOT SURE,
 
+### Here is a summary of the ISA:
+
+|Opcode  |  Descr       |   Effect               |  Format |
+|--------|--------------|------------------------|---------|
+|0       |Halt          |                        |         |
+|1       | Add          |R[d]<-R[s]+R[t]         | RR      |
+|2       | Sub          |R[d]<-R[s]-R[t]         | RR      |
+|3       | And          |R[d]<-R[s]&R[t]         | RR      |
+|4       | Or           |R[d]<-R[s]^R[t]         | RR      |
+|5       | Shift L      |R[d]<-R[s]<<R[t]        | RR      |
+|6       | Shift R      |R[d]<-R[s]>>R[t]        | RR      |
+|7       | Load address | R[d] <- addr           | A       |
+|8       | load         | R[d] <- M[addr]        | A       |
+|9       | store        | M[addr] <- R[d]        | A       |
+|A       | load indirect| R[d]<- M[R[t]]         | RR      |
+|B       | store indirec| M[R[t]] <- R[d]        | RR      |
+|C       | branch z     | if(R[d]==0) PC <- addr | A       |
+|D       | branch pos   | if(R[d]>0) PC <- addr  | A       |
+|E       | jump register| PC <- R[d]             | -       |
+|F       | Jump and link| R[d]<- PC; PC <- addr  | A       |
+
+### Formats
+
+#### RR format
+Opcode  -  d  -  s - t (all four bits)
+
+#### A Formats
+Opcode  - d  -  8 bit address
+
+
 
 ## Planning
 
-* Start with the memory and the switch loading to memory
+* Start with the memory (done)
 
-* Implement PC with built in increment
+* Implement PC with built in increment (done)
 
 * Move on to ALU and test that out.
 
@@ -34,3 +64,7 @@ IRH = Source Reg 1 + Source Reg 2   |  Memory address.
 * Wire up the datapath
 
 * Wire up the control state machine
+
+* Test all in simulation
+
+* Implement switch loading to memory
