@@ -52,9 +52,9 @@ Opcode  - d  -  8 bit address
 
 * Implement PC with built in increment (done)
 
-* Move on to ALU and test that out.
+* Move on to ALU and test that out. (done)
 
-* Register file, implement and test.
+* Register file, implement and test. Needs two output and one input port.  (UNTESTED)
 
 * Implement the IR as two seperate 8 bit registers.   After both are fetched they will contain:
 
