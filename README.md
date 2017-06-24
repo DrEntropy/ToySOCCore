@@ -57,12 +57,22 @@ Opcode  - d  -  8 bit address
 * Register file, implement and test. Needs two output and one input port.  (Done)
  (note I made sure that a zero is returned for r(0))
 
-* Implement the IR as two seperate 8 bit registers.   After both are fetched they will contain:
+* Implement the IR as two seperate 8 bit registers (IRH and IRL).   After both are fetched they will contain:
 
-IRL = Instruction + Dest Register
-IRH = Source Reg 1 + Source Reg 2   |  Memory address.
+IRH = Instruction + Dest Register
+IRL = Source Reg 1 + Source Reg 2   |  Memory address.
+(IMPLEMENTED 8 bit registers)
 
-* Wire up the datapath
+
+* Wire up the datapath, including control inputs (in progress)
+Needed Muxes:
+- Register file InPort = Mem out,ALU out, IRL, PC AddressOut
+- Rfile OutAAddr = IRL(7 downto 4) ('s') , IRH(3 downto 0) ('d')
+- PC AddressIn  = IRL , Regfile OutPortA;''
+- Mem In = IRL,Regfile OutA, CPData
+- Mem Address in = IRL, Reg file OutA, CPAddr
+
+(CPData, and CPAddris for manual data entry, tbd)
 
 * Wire up the control state machine
 
