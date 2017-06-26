@@ -70,7 +70,7 @@ Needed Muxes:
 - Rfile OutAAddr = IRL(7 downto 4) ('s') , IRH(3 downto 0) ('d')
 - PC AddressIn  = IRL , Regfile OutPortA;''
 - Mem In = IRL,Regfile OutA, CPData
-- Mem Address in = IRL, Reg file OutA, CPAddr
+- Mem Address in = IRL, Reg file OutA, PCAddr, CPAddr
 
 (CPData, and CPAddris for manual data entry, tbd)
 
