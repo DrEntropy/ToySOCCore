@@ -33,9 +33,9 @@ ENTITY Control IS
     PCAddrSel : out std_logic;
 
 
+    -- 0 : Regfile OutPortA, 1: IRL, 2: PC, 3: Reg OutportB
+    MemAddrSel : in std_logic_vector(1 downto 0);
 
-    -- 0 : Regfile OutPortA, 1: IRL, 2: PC, 3: DONT USE , but will force takeover
-    MemAddrSel : out std_logic_vector(1 downto 0)
 
 
        );
@@ -74,7 +74,7 @@ BEGIN
           PCAddrSel <= '0';
 
           MemAddrSel <= "00";
-          PCInc <= '0'; 
+          PCInc <= '0';
           MemWE <= '0';
           RFWE <= '0';
           IRLWE  <= '0';IRHWE <= '0';PCWE <= '0';
@@ -96,31 +96,39 @@ BEGIN
               when "10" =>
                   NextState <= "00";
                   case CurrOp is
-                      when x"00" =>
+                      when x"0" =>
                         null; -- nop
                       -- alu
-                      when x"01" | x"02" | x"03" | x"04" | x"05" | x"06" | x"06" =>
+                      when x"1" | x"2" | x"3" | x"4" | x"5" | x"6"  =>
 
                         RegFileInSel <= "01";
                         RFOutAAddrSel <= '0';
                         RFWE <= '1';
                      -- load immediate
-                     when x"07" =>
+                     when x"7" =>
                         RegFileInSel <= "10";
                         RFWE <= '1';
                     -- load
-                     when x"08" =>
+                     when x"8" =>
                         RegFileInSel <= "00";
                         RFWE <= '1';
                         MemAddrSel <= "01";
                      -- store
-                     when x"09" =>
+                     when x"9" =>
                         MemWE <= '1';
                         MemAddrSel <= "01";
                         RFOutAAddrSel <= '1';
-
-
-
+                    -- load Indirect
+                     when x"A" =>
+                        RFWE <= '1';
+                        RegFileInSel <= "00";
+                        MemAddrSel <= "11";
+                     -- store indirect
+                     when x"B" =>
+                        MemWE <= '1';
+                        RFOutAAddrSel <= '1';
+                        MemAddrSel <= "11";
+                       -- now the branches
 
                      when others =>
                          null ;

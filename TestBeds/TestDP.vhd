@@ -46,7 +46,7 @@ component DataPath
      PCAddrSel : in std_logic;
 
 
-     -- 0 : Regfile OutPortA, 1: IRL, 2: PC, 3: DONT USE , but will force takeover
+     -- 0 : Regfile OutPortA, 1: IRL, 2: PC, 3: Reg Output B , 
      MemAddrSel : in std_logic_vector(1 downto 0);
 
      -- For the control panel

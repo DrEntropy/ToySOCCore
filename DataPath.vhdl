@@ -35,8 +35,10 @@ entity DataPath is
      -- 0: IRL, Regfile OutPortA
      PCAddrSel : in std_logic;
 
-     -- 0 : Regfile OutPortA, 1: IRL, 2: PC, 3: DONT USE , but will force takeover
+     -- 0 : Regfile OutPortA, 1: IRL, 2: PC, 3: Reg OutportB
      MemAddrSel : in std_logic_vector(1 downto 0);
+
+
 
      -- For the control panel
     CPAddr  : in std_logic_vector(7 downto 0);
@@ -58,7 +60,8 @@ architecture behave of DataPath is
  signal MemoryOut :std_logic_vector(7 downto 0);
  signal PCIn, PCAddress : std_logic_vector(7 downto 0);
  signal MemInput,MemAddr : std_logic_vector(7 downto 0);
- signal MemMuxAddrSel,MemMuxInSel: std_logic_vector(1 downto 0);
+
+ signal MemAddrT : std_logic_vector(7 downto 0);
 
  signal RFOutA,RFOutB, RFIn : std_logic_vector(7 downto 0);
  signal RFOutAAddr : std_logic_vector (3 downto 0);
@@ -87,14 +90,19 @@ begin
 
 DataOut <= MemoryOut;
 
- -- I think this syntax is right... check it :)
- MemMuxAddrSel <= MemAddrSel when Takeover = '0' else "11";
 
+
+--- two muxes compounded to make this work
 
  MemAddrMux: entity work.FourMux8
-       port map (sel => MemMuxAddrSel ,A=> RFOutA,B=>CurrentInstL , C=>PCAddress, D=>CPAddr, Z=> MemAddr);
+       port map (sel => MemAddrSel ,A=> RFOutA,B=>CurrentInstL , C=>PCAddress, D=>RFOutB, Z=> MemAddrT);
 
--- data input is always RFOutA, except for when it is CP Data in!
+ MemAddrTakeOverMux : entity work.TwoMux8
+      port  map (sel => TakeOver, A=> MemAddrT,B=>CPAddr,Z=> MemAddr);
+
+-- data input is always RFOutA , except for when it is CP Data in!
+
+
  MemDataMux: entity work.TwoMux8
        port map (sel => TakeOver ,A=> RFOutA,B=>CPDataIn, Z=> MemInput);
 
