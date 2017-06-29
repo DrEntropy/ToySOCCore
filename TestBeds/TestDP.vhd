@@ -23,7 +23,7 @@ component DataPath
 
     -- Current Operation
     CurrentOp: out std_logic_vector(3 downto 0);
-
+    Zero, Pos: out std_logic;
      -- ALU Control, see ALU.vhdl
     ALUOp: in std_logic_vector(2 downto 0);
     PCInc : in std_logic;
@@ -37,7 +37,7 @@ component DataPath
     -- MUX Control signals
 
      -- 00: Memout, 01: ALU out, 10: IRL, 11: PC AddressOut
-     RegFileInSel : in std_logic_vector(1 downto 0);
+     RFInSel : in std_logic_vector(1 downto 0);
 
      -- 0: 's', 1:'d'   (sub parts of IRL and IRH)
      RFOutAAddrSel : in std_logic;
@@ -46,7 +46,7 @@ component DataPath
      PCAddrSel : in std_logic;
 
 
-     -- 0 : Regfile OutPortA, 1: IRL, 2: PC, 3: Reg Output B , 
+     -- 0 : Regfile OutPortA, 1: IRL, 2: PC, 3: Reg Output B ,
      MemAddrSel : in std_logic_vector(1 downto 0);
 
      -- For the control panel
@@ -67,15 +67,15 @@ signal Clk, Reset, PCInc,TakeOver : std_logic := '0';
 signal CurrentOp : std_logic_vector(3 downto 0) := "0000";
 signal ALUOp : std_logic_vector(2 downto 0) := "000";
 signal MemWE,RFWE,IRHWE,IRLWE,PCWE : std_logic := '0';
-
-signal RegFileInSel, MemAddrSel: std_logic_vector(1 downto 0) := "00";
+signal Zero, Pos : std_logic;
+signal RFInSel, MemAddrSel: std_logic_vector(1 downto 0) := "00";
 signal RFOutAAddrSel,PCAddrSel: std_logic := '0';
 signal CPAddr, CPDataIn,DataOut : std_logic_vector (7 downto 0);
 
 begin
 
-  dut : DataPath port map (Clk,Reset,CurrentOp,ALUOp,PCInc,MemWE,RFWE,IRHWE,IRLWE,
-            PCWE,RegFileInSel,RFOutAAddrSel,PCAddrSel, MemAddrSel,CPAddr,CPDataIn,TakeOver,DataOut);
+  dut : DataPath port map (Clk,Reset,CurrentOp,Zero,Pos,ALUOp,PCInc,MemWE,RFWE,IRHWE,IRLWE,
+            PCWE,RFInSel,RFOutAAddrSel,PCAddrSel, MemAddrSel,CPAddr,CPDataIn,TakeOver,DataOut);
 
 
 clock : process
@@ -122,7 +122,7 @@ begin
     ---- LOAD the reg file.
     IRLWE <= '0';
     PCInc <= '0'; -- freeze
-    RegFileInSel <= "00";  -- memory
+    RFInSel <= "00";  -- memory
     RFWE <='1';
     MemAddrSel <= "01"; -- Use IRL for address
     wait for 20 ns;-- so far so good!
@@ -151,12 +151,12 @@ begin
     IRLWE <= '0';
     PCInc <= '0'; -- freeze
     --- load immediate
-    RegFileInSel <= "10";  -- IRL
+    RFInSel <= "10";  -- IRL
     RFWE <='1';
     wait for 20 ns;
     RFOutAAddrSel <= '0'; -- Use s
     ALUOp <= "001";
-    RegFileInSel <= "01"; -- ALU
+    RFInSel <= "01"; -- ALU
     -- Note, at this poitn d=2, s = 1, t =2 due to teh way i set things up!
     wait for 20 ns;
     -- Ok works up to here. ONE last thing, lets write r2 to whereever the PC is pointed, which I think

@@ -10,6 +10,7 @@ ENTITY Control IS
        Clk,Reset    : IN Std_Logic;
 
        CurrOp : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+       Zero, Pos : In Std_Logic;
        -- ALU Control, see ALU.vhdl
    ALUOp: out std_logic_vector(2 downto 0);
     -- increment enable
@@ -24,7 +25,7 @@ ENTITY Control IS
    -- MUX Control signals
 
     -- 00: Memout, 01: ALU out, 10: IRL, 11: PC AddressOut
-    RegFileInSel : out std_logic_vector(1 downto 0);
+    RFInSel : out std_logic_vector(1 downto 0);
 
     -- 0: 's', 1:'d'   (sub parts of IRL and IRH)
     RFOutAAddrSel : out std_logic;
@@ -34,7 +35,7 @@ ENTITY Control IS
 
 
     -- 0 : Regfile OutPortA, 1: IRL, 2: PC, 3: Reg OutportB
-    MemAddrSel : in std_logic_vector(1 downto 0);
+    MemAddrSel : out std_logic_vector(1 downto 0)
 
 
 
@@ -70,7 +71,7 @@ BEGIN
     begin
          -- set all signals to zero (this will be the default)
 
-          RegFileInSel <= "00"; RFOutAAddrSel <= '0';
+          RFInSel <= "00"; RFOutAAddrSel <= '0';
           PCAddrSel <= '0';
 
           MemAddrSel <= "00";
@@ -89,7 +90,7 @@ BEGIN
               when "01" =>
               -- Fetch Low word of instruction
                   NextState <= "10";
-                  MemAddrSel <= "10"
+                  MemAddrSel <= "10";
                   IRLWE <= '1';
                   PCInc <= '1';
               -- Execute instruction
@@ -101,16 +102,16 @@ BEGIN
                       -- alu
                       when x"1" | x"2" | x"3" | x"4" | x"5" | x"6"  =>
 
-                        RegFileInSel <= "01";
+                        RFInSel <= "01";
                         RFOutAAddrSel <= '0';
                         RFWE <= '1';
                      -- load immediate
                      when x"7" =>
-                        RegFileInSel <= "10";
+                        RFInSel <= "10";
                         RFWE <= '1';
                     -- load
                      when x"8" =>
-                        RegFileInSel <= "00";
+                        RFInSel <= "00";
                         RFWE <= '1';
                         MemAddrSel <= "01";
                      -- store
@@ -121,15 +122,38 @@ BEGIN
                     -- load Indirect
                      when x"A" =>
                         RFWE <= '1';
-                        RegFileInSel <= "00";
+                        RFInSel <= "00";
                         MemAddrSel <= "11";
                      -- store indirect
                      when x"B" =>
                         MemWE <= '1';
                         RFOutAAddrSel <= '1';
                         MemAddrSel <= "11";
-                       -- now the branches
-
+                       -- now the branches. Note these are absolute
+                      --  Branch z
+                    when x"C" =>
+                       
+                           PCWE <=Zero;  -- tricky right?
+                           PCAddrSel <='0';
+                      
+                    -- branch pos
+                    when x"D" =>
+                       
+                          PCWE <= Pos;
+                          PCAddrSel <= '0';
+                 
+                    --  Jump reg
+                    when x"E" =>
+                         PCWE <= '1';
+                         PCAddrSel <='1';
+                         RFOutAAddrSel <= '1';
+                    -- Jump and Link
+                    when x"F" =>
+                        PCWE <= '1';
+                        PCAddrSel <= '1';
+                        RFInSel <= "11";
+                        RFWE <='1';
+                    -- this should not happen.
                      when others =>
                          null ;
                   end case;

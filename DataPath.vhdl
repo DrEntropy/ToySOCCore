@@ -6,13 +6,17 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
 
+-- for nor_reduce
+use IEEE.std_logic_misc.nor_reduce;
 
 entity DataPath is
   port (
     Clk,Reset: in std_logic;
 
-    -- Current Operation
+
+    -- Current Operation and flags
     CurrentOp: out std_logic_vector(3 downto 0);
+    Zero, Pos: out std_logic;
 
      -- ALU Control, see ALU.vhdl
     ALUOp: in std_logic_vector(2 downto 0);
@@ -27,7 +31,7 @@ entity DataPath is
     -- MUX Control signals
 
      -- 00: Memout, 01: ALU out, 10: IRL, 11: PC AddressOut
-     RegFileInSel : in std_logic_vector(1 downto 0);
+     RFInSel : in std_logic_vector(1 downto 0);
 
      -- 0: 's', 1:'d'   (sub parts of IRL and IRH)
      RFOutAAddrSel : in std_logic;
@@ -69,6 +73,11 @@ begin
  -- ...
  ALU : entity work.ALU
     port map (op => ALUop,A => RFOutA,B => RFOutB,Res => ALURes);
+
+-- Zero and pos
+--
+Zero <= nor_reduce( RFOutA);
+Pos <= not RFOutA(7);
 
  -- Contains s, t or addr
  IRegL: entity work.IReg
@@ -113,7 +122,7 @@ DataOut <= MemoryOut;
 
    -- 00: Memout, 01: ALU out, 10: IRL, 11: PC AddressOut (for link)
  RFInMux : entity work.FourMux8
-       port map (sel => RegFileInSel,A => MemoryOut,B=> ALURes, C => CurrentInstL, D=> PCAddress,Z=> RFIn);
+       port map (sel => RFInSel,A => MemoryOut,B=> ALURes, C => CurrentInstL, D=> PCAddress,Z=> RFIn);
 
 
 

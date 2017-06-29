@@ -76,7 +76,7 @@ Needed Muxes:
 
 (CPData, and CPAddris for manual data entry, tbd)
 
-* Wire up the control state machine (In progress)
+* Wire up the control state machine (Done, RTL elaboration works, not tested)
 
 * Test all in simulation
 
