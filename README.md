@@ -64,7 +64,7 @@ IRL = Source Reg 1 + Source Reg 2   |  Memory address.
 (IMPLEMENTED 8 bit registers)
 
 
-* Wire up the datapath, including control inputs (in progress)
+* Wire up the datapath, including control inputs (DONE)
 Needed Muxes:
 - Register file InPort = Mem out,ALU out, IRL, PC AddressOut
 - Rfile OutAAddr = IRL(7 downto 4) ('s') , IRH(3 downto 0) ('d')
@@ -74,7 +74,7 @@ Needed Muxes:
 
 (CPData, and CPAddris for manual data entry, tbd)
 
-* Wire up the control state machine
+* Wire up the control state machine (In progress)
 
 * Test all in simulation
 

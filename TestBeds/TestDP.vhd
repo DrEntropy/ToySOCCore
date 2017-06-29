@@ -1,4 +1,4 @@
- 
+
 -- this is just some quick checks to make sure nothing obviously broken.
 -- more detailed checks will be driven by the controller state machine
 
@@ -9,7 +9,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 -- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
 
- 
+
 
 entity TestDP is
 --  Port ( );
@@ -46,8 +46,6 @@ component DataPath
      PCAddrSel : in std_logic;
 
 
-     -- 0 : Regfile OutPortA, 1: IRL
-     MemInSel : in std_logic;
      -- 0 : Regfile OutPortA, 1: IRL, 2: PC, 3: DONT USE , but will force takeover
      MemAddrSel : in std_logic_vector(1 downto 0);
 
@@ -63,7 +61,7 @@ component DataPath
 
   );
   end component;
-  
+
   -- singals to manipulate oh my!  Almost just a repeat of teh above. Verbosity !
 signal Clk, Reset, PCInc,TakeOver : std_logic := '0';
 signal CurrentOp : std_logic_vector(3 downto 0) := "0000";
@@ -71,16 +69,16 @@ signal ALUOp : std_logic_vector(2 downto 0) := "000";
 signal MemWE,RFWE,IRHWE,IRLWE,PCWE : std_logic := '0';
 
 signal RegFileInSel, MemAddrSel: std_logic_vector(1 downto 0) := "00";
-signal RFOutAAddrSel,MemInSel,PCAddrSel: std_logic := '0';
-signal CPAddr, CPDataIn,DataOut : std_logic_vector (7 downto 0); 
+signal RFOutAAddrSel,PCAddrSel: std_logic := '0';
+signal CPAddr, CPDataIn,DataOut : std_logic_vector (7 downto 0);
 
 begin
 
   dut : DataPath port map (Clk,Reset,CurrentOp,ALUOp,PCInc,MemWE,RFWE,IRHWE,IRLWE,
-            PCWE,RegFileInSel,RFOutAAddrSel,PCAddrSel,MemInSel, MemAddrSel,CPAddr,CPDataIn,TakeOver,DataOut);
-            
-  
-clock : process 
+            PCWE,RegFileInSel,RFOutAAddrSel,PCAddrSel, MemAddrSel,CPAddr,CPDataIn,TakeOver,DataOut);
+
+
+clock : process
 begin
   clk <= '0';
   wait for 10 ns;
@@ -100,7 +98,7 @@ begin
    CPAddr <= std_logic_vector(to_unsigned(i-1,8));
    CPDataIn <= std_logic_vector(to_unsigned(i,8));
    wait for 20 ns;
- end loop;   
+ end loop;
  --  at this point memory is loaded with some stuff. Now simulate R[d] <- M[addr] (indirect load)
  --   I need to put that instruction in memory somewhere to get it into the IRL IRH
  --  It will have to be 0 and 1 since that is where the PC counter should be after reset
@@ -109,10 +107,10 @@ begin
      wait for 20 ns;
      CPAddr <= x"01";
      CPDataIn <= x"06";  -- data is at lcoation 6
-     wait for 20 ns;  
+     wait for 20 ns;
      takeover <= '0';
-     MemWE <= '0'; 
-  
+     MemWE <= '0';
+
  --  Load the first instruction
     IRHWE <= '1';
     MemAddrSel <= "10";  -- use pc for address
@@ -125,22 +123,22 @@ begin
     IRLWE <= '0';
     PCInc <= '0'; -- freeze
     RegFileInSel <= "00";  -- memory
-    RFWE <='1'; 
+    RFWE <='1';
     MemAddrSel <= "01"; -- Use IRL for address
     wait for 20 ns;-- so far so good!
-    -- Now I want to load reg file 2, and add them up into 3. 
+    -- Now I want to load reg file 2, and add them up into 3.
     -- Need to repeat some stuff here.
     RFWE <= '0';
     MemWE <= '1';
     TakeOver <= '1';
     CPAddr <= x"02";
-    CPDataIn <= x"72" ; -- use register 2 
+    CPDataIn <= x"72" ; -- use register 2
     wait for 20 ns;
     CPAddr <= x"03";
     CPDataIn <= x"12";  -- data is 12  . Below this will be re-interpreted as reg 1 and 2 !
-    wait for 20 ns;  
+    wait for 20 ns;
     takeover <= '0';
-    MemWE <= '0'; 
+    MemWE <= '0';
     --- Load IR
      --  Load the 2nd instruction
     IRHWE <= '1';
@@ -162,19 +160,18 @@ begin
     -- Note, at this poitn d=2, s = 1, t =2 due to teh way i set things up!
     wait for 20 ns;
     -- Ok works up to here. ONE last thing, lets write r2 to whereever the PC is pointed, which I think
-    -- is 4 
-   
-    RFWE <= '0';   
+    -- is 4
+
+    RFWE <= '0';
     -- set the muxes
     RFOutAAddrSel <= '1'; -- Use d not s
-    MemInSel <= '0';
     MemAddrSel <= "10";  -- use PC
     MemWE <= '1';
     wait for 20 ns;
     MemWE <= '0';
     wait for 20 ns;
-       
-end process test;  
-  
-  
+
+end process test;
+
+
 end Behavioral;

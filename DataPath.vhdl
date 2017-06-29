@@ -35,9 +35,6 @@ entity DataPath is
      -- 0: IRL, Regfile OutPortA
      PCAddrSel : in std_logic;
 
-
-     -- 0 : Regfile OutPortA, 1: IRL
-     MemInSel : in std_logic;
      -- 0 : Regfile OutPortA, 1: IRL, 2: PC, 3: DONT USE , but will force takeover
      MemAddrSel : in std_logic_vector(1 downto 0);
 
@@ -76,7 +73,7 @@ begin
  -- Contains op and d
  IRegH: entity work.IReg
        port map (WriteEnable => IRHWE,DataIn=> MemoryOut,DataOut=> CurrentInstH,Reset=> Reset,Clk=> Clk);
-       
+
  CurrentOp <= CurrentInstH(7 downto 4);
 
  PC : entity work.ProgramCounter
@@ -93,13 +90,13 @@ DataOut <= MemoryOut;
  -- I think this syntax is right... check it :)
  MemMuxAddrSel <= MemAddrSel when Takeover = '0' else "11";
 
- MemMuxInSel <= TakeOver&MemInSel;
 
  MemAddrMux: entity work.FourMux8
        port map (sel => MemMuxAddrSel ,A=> RFOutA,B=>CurrentInstL , C=>PCAddress, D=>CPAddr, Z=> MemAddr);
 
- MemDataMux: entity work.FourMux8
-       port map (sel => MemMuxInSel ,A=> RFOutA,B=>CurrentInstL , C=>CPDataIn, D=>CPDataIn, Z=> MemInput);
+-- data input is always RFOutA, except for when it is CP Data in!
+ MemDataMux: entity work.TwoMux8
+       port map (sel => TakeOver ,A=> RFOutA,B=>CPDataIn, Z=> MemInput);
 
 --- RFile wire up
  RFile: entity work.RegFile
