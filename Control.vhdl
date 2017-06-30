@@ -150,7 +150,7 @@ BEGIN
                     -- Jump and Link
                     when x"F" =>
                         PCWE <= '1';
-                        PCAddrSel <= '1';
+                        PCAddrSel <= '0';
                         RFInSel <= "11";
                         RFWE <='1';
                     -- this should not happen.

@@ -81,7 +81,7 @@ begin
     Run <= '1';
     wait for 20 ns;
     Run <= '0';  -- should hold in run mode.
-    wait for 5000 ns;  -- arbitrary time, long enouhg for this program
+    wait for 10 ms;  -- arbitrary time, long enouhg for this program
     assert false report "Simulation Finished" severity failure;
     end process;
 
