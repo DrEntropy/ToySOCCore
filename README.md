@@ -1,6 +1,6 @@
 ## Basic motivation
 
-I have always wanted to wire up my own CPU, but I don't have the patience to do it with discrete components. The idea of making a simple Von Neumann architecture multicycle cpu on an FPGA I think will scratch that itch :)   The board I plan on using is the Basys 3 , which has 16 switches and corresponding LED's, as well as 5 push buttons and a 4 digit 7 segment display (among other things!)
+I have always wanted to wire up my own CPU, but I don't have the patience to do it with discrete components. Making a simple Von Neumann architecture (multi-cycle) cpu on an FPGA will scratch that itch.   The board I plan on using is the Basys 3 , on which I will use the  16 switches and corresponding LED's, as well as the push buttons.
 
 
 ## Instruction Set architecture
@@ -12,11 +12,9 @@ I have made some changes:
 * 8 bit words.  So each instruction will take TWO memory reads to load.  The reason for this is that my board only has 16 switches. But a secondary reason is that this is how the relay computer in Petzold's "Code" works, and I want to make sure I know how to make it go!
 
 
-* opcode 0 is NOP instead of HALT.  This was just an oversight i forgot about.   Instead of halt, just do endless loop at end.
+* Opcode 0 is NOP instead of HALT.  This was just an oversight.   Instead of halt, just do endless loop at end.
 
-* Input output will be OLD school via switches and LED's as in the book, but The LED's will always display the results at the current memory location, so i will skip the 'show' button at first.
-
-* I will probably use the seven segment display to show the current address or the current next TWO words (i.e. 16 bits.) NOT SURE,
+* Input & output will be OLD school via switches and LED's as in the book. See below for more.
 
 ### Here is a summary of the ISA:
 
@@ -62,12 +60,14 @@ Opcode  - d  -  8 bit address
 
 * Implement the IR as two seperate 8 bit registers (IRH and IRL).   After both are fetched they will contain:
 
-IRH = Instruction + Dest Register
-IRL = Source Reg 1 + Source Reg 2   |  Memory address.
-(IMPLEMENTED 8 bit registers)
-
+```
+  IRH = Instruction + Dest Register
+  IRL = Source Reg 1 + Source Reg 2   |  Memory address.
+  (IMPLEMENTED 8 bit registers)
+```
 
 * Wire up the datapath, including control inputs (DONE)
+
 Needed Muxes:
 - Register file InPort = Mem out,ALU out, IRL, PC AddressOut
 - Rfile OutAAddr = IRL(7 downto 4) ('s') , IRH(3 downto 0) ('d')
@@ -75,7 +75,7 @@ Needed Muxes:
 - Mem In = IRL,Regfile OutA, CPData
 - Mem Address in = IRL, Reg file OutA, PCAddr, CPAddr
 
-(CPData, and CPAddris for manual data entry)
+(CPData, and CPAddr is for manual data entry)
 
 * Wire up the control state machine (Done, checked RTL Elaboration, works)
 
@@ -87,13 +87,16 @@ Needed Muxes:
 
 Switch loading will work like this:  The first 8 switches is the address, teh second is the data.  The lights on top correspond to same from the core.
 Buttons will do this:
+```
 Top button: STOP = Enter "Takeover Mode"  (and hold reset to stop execution)
 Bottom Button:RUN =  Leave "take over mode" and start executing
-Middle button : WRITE -> Enable write of memory at selected address  with selected data on switches. it is ok if this bounces, but future work - send through a flip flop to make synchro
+Middle button : WRITE -> Enable write of memory at selected address  with selected data on switches.
+```
 
-* Test on FPGA  (i am going to use a simplified program with less keying in!)
+* Test on FPGA  (TBD)
 
 * Test Program
+```
 00:r[1] <- 01   ; 7101
 02:r[2] <- M[XX] ; 8212
 04:r[3] <- 00  ; 7300
@@ -111,7 +114,7 @@ Middle button : WRITE -> Enable write of memory at selected address  with select
 1C:r[5] <- r[5] << r[3] ;5553
 1E: M[R[4]] <- R[5]    ; B504
 20:PC <- R[F]  ; EF00
-
+```
 Output is at F0, should be 78 decimal
 F1 should be 10
 
