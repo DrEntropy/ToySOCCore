@@ -1,6 +1,8 @@
 
 -- this is just some quick checks to make sure nothing obviously broken.
 -- more detailed checks will be driven by the controller state machine
+-- This TB has not been used since teh data address out port was added.
+-- it should still work thouh?
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -57,7 +59,8 @@ component DataPath
     -- when takeover is true, CPAddr , CPDataIn  are enabled
     TakeOver : in std_logic;
     -- reflects the current memory output
-    DataOut : out std_logic_vector(7 downto 0)
+    DataOut : out std_logic_vector(7 downto 0);
+    MemAddr : out std_logic_vector(7 downto 0)
 
   );
   end component;
@@ -70,12 +73,13 @@ signal MemWE,RFWE,IRHWE,IRLWE,PCWE : std_logic := '0';
 signal Zero, Pos : std_logic;
 signal RFInSel, MemAddrSel: std_logic_vector(1 downto 0) := "00";
 signal RFOutAAddrSel,PCAddrSel: std_logic := '0';
-signal CPAddr, CPDataIn,DataOut : std_logic_vector (7 downto 0);
+signal CPAddr, CPDataIn,DataOut,DataAddr : std_logic_vector (7 downto 0);
+
 
 begin
 
   dut : DataPath port map (Clk,Reset,CurrentOp,Zero,Pos,ALUOp,PCInc,MemWE,RFWE,IRHWE,IRLWE,
-            PCWE,RFInSel,RFOutAAddrSel,PCAddrSel, MemAddrSel,CPAddr,CPDataIn,TakeOver,DataOut);
+            PCWE,RFInSel,RFOutAAddrSel,PCAddrSel, MemAddrSel,CPAddr,CPDataIn,TakeOver,DataOut,DataAddr);
 
 
 clock : process

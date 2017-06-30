@@ -7,10 +7,13 @@ use IEEE.std_logic_textio.all;
 use std.textio.all;
 
 entity TOYCore is
-  --  Port ( );
+   Port (Clk,Run,Stop,Write : in std_logic;
+            CPAddr,CPDataIn : in std_logic_vector(7 downto 0);
+            DataOut, DataAddr : out std_logic_vector(7 downto 0)
+             );
 end TOYCore;
 
-architecture Behavioral of TOYCore is
+architecture Structural of TOYCore is
 -- use components so i have them for reference!
 
 component DataPath
@@ -53,7 +56,8 @@ component DataPath
     -- when takeover is true, CPAddr , CPDataIn  are enabled
     TakeOver : in std_logic;
     -- reflects the current memory output
-    DataOut : out std_logic_vector(7 downto 0)
+    DataOut,DataAddr : out std_logic_vector(7 downto 0)
+
 
   );
   end component;
@@ -94,8 +98,8 @@ component DataPath
          );
   END Component;
 
-signal reset : std_logic := '1';
-signal clk,Zero,Pos,PCInc : std_logic ;
+
+signal Zero,Pos,PCInc : std_logic ;
 signal CurrOp : std_logic_vector(3 downto 0);
 signal ALUOp : std_logic_vector(2 downto 0);
 signal MemWE,RFWE,IRHWE,IRLWE,PCWE : std_logic := '0';
@@ -103,68 +107,44 @@ signal DPMemWE : std_logic :='0';
 signal RFInSel : std_logic_vector(1 downto 0);
 signal RFOutAAddrSel,PCAddrSel : std_logic;
 signal MemAddrSel : std_logic_vector(1 downto 0);
-signal CPAddr,CPDataIn,DataOut : std_logic_vector(7 downto 0);
-signal TakeOver : std_logic;
-signal TakeOverWE : std_logic;
+Signal Reset,TakeOver: std_logic;
+
 
 begin
-   dp : DataPath port map (Clk => clk,Reset => reset,CurrentOp => CurrOp,
+   dp : DataPath port map (Clk => Clk,Reset => Reset,CurrentOp => CurrOp,
         Zero=>Zero,Pos=>Pos,ALUOp=>ALUOp,PCInc=>PCInc,MemWE=>DPMemWE,RFWE=>RFWE,
         IRHWE=>IRHWE,IRLWE=>IRLWE,PCWE=> PCWE,RFInSel=>RFInSel,
         RFOutAAddrSel=>RFOutAAddrSel,PCAddrSel=>PCAddrSel,MemAddrSel=>MemAddrSel,
         CPAddr=>CPAddr,CPDataIn=>CPDataIn,TakeOver=>TakeOver,
-        DataOut=>DataOut);
-   cont: Control port map (Clk => clk,Reset => reset,CurrOp => CurrOp,
+        DataOut=>DataOut,DataAddr=>DataAddr);
+   cont: Control port map (Clk => Clk,Reset => reset,CurrOp => CurrOp,
         Zero=>Zero,Pos=>Pos,ALUOp=>ALUOp,PCInc=>PCInc,MemWE=>MemWE,RFWE=>RFWE,
         IRHWE=>IRHWE,IRLWE=>IRLWE,PCWE=> PCWE,RFInSel=>RFInSel,
         RFOutAAddrSel=>RFOutAAddrSel,PCAddrSel=>PCAddrSel,MemAddrSel=>MemAddrSel
         );
 
-   -- The clock:
-   clock : process
-   begin
-     clk <= '0';
-     wait for 10 ns;
-     clk <= '1';
-     wait for 10 ns;
-   end process clock;
-   
-   DPMemWE <= MemWE Or TakeOverWE;
-   
-   
-   -- Load the memory using CPAddr and CPDataIn:
-   
-   test : process
-      file data_in: TEXT;
-      variable aline  :  line;
-      variable datah : std_logic_vector(7 downto 0);
-      variable linenum : integer := 0;
-   begin
-      reset <= '1'; -- this keeps the control from running
-      -- while we load things. We will want to tie takeover to this in teh end
-      -- GOAL: load ram from file
-      takeover <= '1';
-      TakeOverWE <= '1';
-      wait for 20 ns;
-      -- fucking wierd.
-      file_open(data_in,"C:/XilinxWork/RamData.txt",READ_MODE);
-    while not endfile(data_in) loop
-      readline(data_in,aline);
-      hread(aline,datah);
-      CPAddr <= std_logic_vector(to_unsigned(linenum,8));
-      linenum := linenum+1;
-      CPDataIn <= datah;
-      report "The value of line is"& integer'image(to_integer(unsigned(datah)));
-      wait for 20 ns;
-    end loop;
 
-    -- Now let it go!
-    takeover <= '0';
-    takeoverWE <= '0';
-    reset <= '0';
-    wait for 5000 ns;
-    assert false report "Simulation Finished" severity failure;
-    end process;
+-- TODO: Do we need a synchronizing flip flop on TakeOver?
+-- Also, this part is not very structural lol
+
+   DPMemWE <= MemWE Or Write;
+   
+   controlproc : Process(clk)
+      begin
+         if(rising_edge(clk)) then
+            if(Stop = '1') then 
+               TakeOver <= '1';
+               Reset <= '1';
+            elsif (Run = '1') then
+               TakeOver <= '0';
+               Reset <= '0';
+            end if;
+         end if;
+      
+      end process;
 
 
-end Behavioral;
+
+
+
+end Structural;

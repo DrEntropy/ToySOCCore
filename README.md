@@ -74,10 +74,22 @@ Needed Muxes:
 - Mem In = IRL,Regfile OutA, CPData
 - Mem Address in = IRL, Reg file OutA, PCAddr, CPAddr
 
-(CPData, and CPAddris for manual data entry, tbd)
+(CPData, and CPAddris for manual data entry)
 
-* Wire up the control state machine (Done, RTL elaboration works, not tested)
+* Wire up the control state machine (Done, checked RTL Elaboration, works)
 
-* Test all in simulation
+* Wire up TOYCore and test; (Works , discovered one accidental latch!)
+   So far have only tested Add,Sub, Load, Store, JP,JZ , lots more to test
 
-* Implement switch loading to memory
+
+* Implement switch loading to memory (done, tested in sim)
+
+Switch loading will work like this:  The first 8 switches is the address, teh second is the data.  The lights on top correspond to same from the core.
+Buttons will do this:
+Top button: STOP = Enter "Takeover Mode"  (and hold reset to stop execution)
+Bottom Button:RUN =  Leave "take over mode" and start executing
+Middle button : WRITE -> Enable write of memory at selected address  with selected data on switches. it is ok if this bounces, but send through a flip flop to make synchro
+
+* Test on FPGA
+
+* Test more instructions in SIM

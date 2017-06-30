@@ -52,7 +52,8 @@ entity DataPath is
     -- when takeover is true, CPAddr , CPDataIn  are enabled
     TakeOver : in std_logic;
     -- reflects the current memory output
-    DataOut : out std_logic_vector(7 downto 0)
+    DataOut : out std_logic_vector(7 downto 0);
+    DataAddr: out std_logic_vector(7 downto 0)
 
   );
   end entity DataPath;
@@ -99,7 +100,7 @@ Pos <= (not RFOutA(7)) AND (not nor_reduce( RFOutA));
        port map (CLK => Clk, DATAIN=> MemInput,ADDRESS=> MemAddr,W_R => MemWE, DATAOUT=> MemoryOut);
 
 DataOut <= MemoryOut;
-
+DataAddr <= MemAddr;
 
 
 --- two muxes compounded to make this work
