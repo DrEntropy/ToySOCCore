@@ -75,9 +75,10 @@ begin
     port map (op => ALUop,A => RFOutA,B => RFOutB,Res => ALURes);
 
 -- Zero and pos
---
+-- note duplicate circuit
+-- TODO: FIX
 Zero <= nor_reduce( RFOutA);
-Pos <= not RFOutA(7);
+Pos <= (not RFOutA(7)) AND (not nor_reduce( RFOutA));
 
  -- Contains s, t or addr
  IRegL: entity work.IReg

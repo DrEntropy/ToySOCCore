@@ -66,7 +66,7 @@ BEGIN
   ALUOp <= CurrOp(2 downto 0);
 
 -- now generate the signals based on the state
-  process(State,CurrOp)
+  process(State,CurrOp,Zero,Pos)
 
     begin
          -- set all signals to zero (this will be the default)
@@ -132,13 +132,13 @@ BEGIN
                        -- now the branches. Note these are absolute
                       --  Branch z
                     when x"C" =>
-                       
+                           RFOutAAddrSel <= '1';
                            PCWE <=Zero;  -- tricky right?
                            PCAddrSel <='0';
                       
                     -- branch pos
                     when x"D" =>
-                       
+                          RFOutAAddrSel <= '1';
                           PCWE <= Pos;
                           PCAddrSel <= '0';
                  
