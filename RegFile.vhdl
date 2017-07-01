@@ -1,4 +1,24 @@
+-- 16 x 8 register file. Note that element 0 is always 0
+----------------------------------------------------------------------------
+-- ToyCore CPU implements the TOY ISA from "Computer Science: An Interdisciplinary Approach" by
+-- Robert Sedgewick and Kevin Wayne.
+-- Implemented by Ron Legere
+---------------------------------------------------------------------------
+--  This file is part of ToyCore
 
+--    ToyCore is free software: you can redistribute it and/or modify
+--    it under the terms of the GNU General Public License as published by
+--    the Free Software Foundation, either version 3 of the License, or
+--    (at your option) any later version.
+
+--    ToyCore is distributed in the hope that it will be useful,
+--    but WITHOUT ANY WARRANTY; without even the implied warranty of
+--    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+--    GNU General Public License for more details.
+
+--    You should have received a copy of the GNU General Public License
+--    along with ToyCore.  If not, see <http://www.gnu.org/licenses/>.
+--
 
 LIBRARY IEEE;
     USE IEEE.STD_LOGIC_1164.ALL;
@@ -26,7 +46,7 @@ TYPE MEM IS ARRAY (15 DOWNTO 0) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
 SIGNAL RFile : MEM;
 
 BEGIN
--- note that always return zero when address 0 is asked for. 
+-- note that always return zero when address 0 is asked for.
 
   OutPortA <= x"00" when OutAAddr = x"0" else  Rfile(to_integer(unsigned(OutAAddr)));
   OutPortB <= x"00" when OutBAddr = x"0" else  Rfile(to_integer(unsigned(OutBAddr)));

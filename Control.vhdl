@@ -1,4 +1,24 @@
+-- Controller State Machine
+----------------------------------------------------------------------------
+-- ToyCore CPU implements the TOY ISA from "Computer Science: An Interdisciplinary Approach" by
+-- Robert Sedgewick and Kevin Wayne.
+-- Implemented by Ron Legere
+---------------------------------------------------------------------------
+--  This file is part of ToyCore
 
+--    ToyCore is free software: you can redistribute it and/or modify
+--    it under the terms of the GNU General Public License as published by
+--    the Free Software Foundation, either version 3 of the License, or
+--    (at your option) any later version.
+
+--    ToyCore is distributed in the hope that it will be useful,
+--    but WITHOUT ANY WARRANTY; without even the implied warranty of
+--    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+--    GNU General Public License for more details.
+
+--    You should have received a copy of the GNU General Public License
+--    along with ToyCore.  If not, see <http://www.gnu.org/licenses/>.
+--
 
 LIBRARY IEEE;
     USE IEEE.STD_LOGIC_1164.ALL;
@@ -135,13 +155,13 @@ BEGIN
                            RFOutAAddrSel <= '1';
                            PCWE <=Zero;  -- tricky right?
                            PCAddrSel <='0';
-                      
+
                     -- branch pos
                     when x"D" =>
                           RFOutAAddrSel <= '1';
                           PCWE <= Pos;
                           PCAddrSel <= '0';
-                 
+
                     --  Jump reg
                     when x"E" =>
                          PCWE <= '1';

@@ -1,3 +1,24 @@
+-- Top Level TOYCORE
+----------------------------------------------------------------------------
+-- ToyCore CPU implements the TOY ISA from "Computer Science: An Interdisciplinary Approach" by
+-- Robert Sedgewick and Kevin Wayne.
+-- Implemented by Ron Legere
+---------------------------------------------------------------------------
+--  This file is part of ToyCore
+
+--    ToyCore is free software: you can redistribute it and/or modify
+--    it under the terms of the GNU General Public License as published by
+--    the Free Software Foundation, either version 3 of the License, or
+--    (at your option) any later version.
+
+--    ToyCore is distributed in the hope that it will be useful,
+--    but WITHOUT ANY WARRANTY; without even the implied warranty of
+--    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+--    GNU General Public License for more details.
+
+--    You should have received a copy of the GNU General Public License
+--    along with ToyCore.  If not, see <http://www.gnu.org/licenses/>.
+--
 -- libraies
 
 library IEEE;
@@ -128,11 +149,11 @@ begin
 -- Also, this part is not very structural lol
 
    DPMemWE <= MemWE Or Write;
-   
+
    controlproc : Process(clk)
       begin
          if(rising_edge(clk)) then
-            if(Stop = '1') then 
+            if(Stop = '1') then
                TakeOver <= '1';
                Reset <= '1';
             elsif (Run = '1') then
@@ -140,7 +161,7 @@ begin
                Reset <= '0';
             end if;
          end if;
-      
+
       end process;
 
 
