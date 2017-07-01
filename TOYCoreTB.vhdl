@@ -83,10 +83,10 @@ begin
       -- allow a clock cycle to set these values
       wait for 20 ns;
       Stop <= '0'; -- release teh button, should do nothing
-      -- fucking wierd.
-      -- file_open(data_in,"C:/XilinxWork/RamData.txt",READ_MODE);
-      file_open(data_in,"D:/RonWorking/XilinixWork/RamData.txt",READ_MODE);
-     -- file_open(data_in,"RamData.txt",READ_MODE);
+      -- replace with path to RamData or any other code  in ascii
+      -- hex format. You still need to add to project i think.
+      file_open(data_in,"C:/XilinxWork/RamData.txt",READ_MODE);
+ 
     while not endfile(data_in) loop
       readline(data_in,aline);
       hread(aline,datah);
