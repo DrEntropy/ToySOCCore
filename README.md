@@ -93,7 +93,8 @@ Bottom Button:RUN =  Leave "take over mode" and start executing
 Middle button : WRITE -> Enable write of memory at selected address  with selected data on switches.
 ```
 
-* Test on FPGA  (TBD)
+* Test on FPGA  (works , with simplified program. Need a way to program without using
+switches)
 
 * Test Program
 ```
