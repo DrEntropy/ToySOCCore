@@ -1,4 +1,5 @@
--- Test Bed for TopLevel
+-- Test Bed for ToyCore.
+-- Simply wire it up and test it!
 ----------------------------------------------------------------------------
 -- ToyCore CPU implements the TOY ISA from "Computer Science: An Interdisciplinary Approach" by
 -- Robert Sedgewick and Kevin Wayne.
@@ -77,16 +78,18 @@ begin
    begin
       Run <= '0';
       Stop <= '1'; -- this keeps the control from running
-      -- while we load things. We will want to tie takeover to this in teh end
+      --
       -- GOAL: load ram from file
       Write <= '1';
       -- allow a clock cycle to set these values
       wait for 20 ns;
-      Stop <= '0'; -- release teh button, should do nothing
+      Stop <= '0'; -- release the button, it has a flip flop so that the
+      -- user doesn't have to hold down the button.
+
       -- replace with path to RamData or any other code  in ascii
-      -- hex format. You still need to add to project i think.
+      -- hex format. You still need to add to project I think, if using Vivado
       file_open(data_in,"C:/XilinxWork/RamData.txt",READ_MODE);
- 
+
     while not endfile(data_in) loop
       readline(data_in,aline);
       hread(aline,datah);
@@ -94,16 +97,18 @@ begin
       linenum := linenum+1;
       CPDataIn <= datah;
       report "The value of line is"& integer'image(to_integer(unsigned(datah)));
-      -- allow the value to clcok in
+      -- allow the value to clock in
       wait for 20 ns;
     end loop;
+
+    -- memory is now loaded.
 
     -- Now let it go!
     Write <= '0';
     Run <= '1';
     wait for 20 ns;
     Run <= '0';  -- should hold in run mode.
-    wait for 10 ms;  -- arbitrary time, long enouhg for this program
+    wait for 10 ms;  -- arbitrary time, long enough for this program
     assert false report "Simulation Finished" severity failure;
     end process;
 

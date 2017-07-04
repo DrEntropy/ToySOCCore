@@ -24,7 +24,10 @@ LIBRARY IEEE;
     USE IEEE.STD_LOGIC_1164.ALL;
     USE IEEE.Numeric_Std.ALL;
 
--- RAM entity
+-- Regfile entity
+-- This is a two outport, one inport register file. 16 registers,
+-- register 0 is always 0 and any writes to it will be ignored.
+
 ENTITY RegFile IS
   PORT(
        Clk    : IN Std_Logic;

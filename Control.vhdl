@@ -24,16 +24,22 @@ LIBRARY IEEE;
     USE IEEE.STD_LOGIC_1164.ALL;
     USE IEEE.Numeric_Std.ALL;
 
--- RAM entity
+--  Control.  Most of these are meant to connect to the
+-- corresponding ports on the data path.
+
+
 ENTITY Control IS
   PORT(
        Clk,Reset    : IN Std_Logic;
 
+--   The current instruction and flags, from the datapath
        CurrOp : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
        Zero, Pos : In Std_Logic;
+
+
        -- ALU Control, see ALU.vhdl
    ALUOp: out std_logic_vector(2 downto 0);
-    -- increment enable
+    -- increment enable of PC when 1
    PCInc : out std_logic;
     -- Write enables
 
@@ -44,16 +50,20 @@ ENTITY Control IS
 
    -- MUX Control signals
 
+    -- Register file input select.
     -- 00: Memout, 01: ALU out, 10: IRL, 11: PC AddressOut
     RFInSel : out std_logic_vector(1 downto 0);
 
+
+    -- Register file output A address select.
     -- 0: 's', 1:'d'   (sub parts of IRL and IRH)
     RFOutAAddrSel : out std_logic;
 
+    -- PC load address select
     -- 0: IRL, Regfile OutPortA
     PCAddrSel : out std_logic;
 
-
+    -- Memory address select.
     -- 0 : Regfile OutPortA, 1: IRL, 2: PC, 3: Reg OutportB
     MemAddrSel : out std_logic_vector(1 downto 0)
 

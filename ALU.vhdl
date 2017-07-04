@@ -27,6 +27,16 @@ use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
 
 
+-- simple ALU, no flags.
+-- the op is from 3 bits in the opcode (the least significant)
+-- 001 = add
+-- 010 = Sub
+-- 011 = and
+-- 100 = OR
+-- 101 = Shift Left
+-- 110 = Shift right
+-- Others do nothing, just copy a to result
+
 entity ALU is
   port (
     op : in std_logic_vector(2 downto 0);
@@ -42,7 +52,7 @@ architecture behave of ALU is
 begin
 
     process (A,B,op)
-    -- Used to simplify the expressions below
+    -- sA and sB are used to simplify the expressions below
       variable sA,sB : signed(7 downto 0);
       begin
         sA := signed(A);

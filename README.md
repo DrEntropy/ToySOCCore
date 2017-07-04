@@ -47,28 +47,23 @@ Opcode  - d  -  8 bit address
 
 
 
-## Planning
+## Some Implementation Notes
 
-* Start with the memory (done)
+* Memory in this system is limited to 256x8
 
-* Implement PC with built in increment (done)
+* PC has built in increment rather then using ALU
 
-* Move on to ALU and test that out. (done)
+* Register file  Needs two output and one input port.   Also register 0 is always a constant 0
 
-* Register file, implement and test. Needs two output and one input port.  (Done)
- (note I made sure that a zero is returned for r(0))
-
-* Implement the IR as two seperate 8 bit registers (IRH and IRL).   After both are fetched they will contain:
+* The IR is two seperate 8 bit registers (IRH and IRL).   After both are fetched they will contain:
 
 ```
   IRH = Instruction + Dest Register
   IRL = Source Reg 1 + Source Reg 2   |  Memory address.
-  (IMPLEMENTED 8 bit registers)
+
 ```
 
-* Wire up the datapath, including control inputs (DONE)
-
-Needed Muxes:
+* Needed Muxes:
 - Register file InPort = Mem out,ALU out, IRL, PC AddressOut
 - Rfile OutAAddr = IRL(7 downto 4) ('s') , IRH(3 downto 0) ('d')
 - PC AddressIn  = IRL , Regfile OutPortA;''
@@ -77,13 +72,8 @@ Needed Muxes:
 
 (CPData, and CPAddr is for manual data entry)
 
-* Wire up the control state machine (Done, checked RTL Elaboration, works)
 
-* Wire up TOYCore and test; (Works , discovered one accidental latch!)
-    (tested using Test Program below)
-
-
-* Implement switch loading to memory (done, tested in sim)
+* Switch loading (on the Basys 3)
 
 Switch loading will work like this:  The first 8 switches is the address, teh second is the data.  The lights on top correspond to same from the core.
 Buttons will do this:
@@ -92,9 +82,6 @@ Top button: STOP = Enter "Takeover Mode"  (and hold reset to stop execution)
 Bottom Button:RUN =  Leave "take over mode" and start executing
 Middle button : WRITE -> Enable write of memory at selected address  with selected data on switches.
 ```
-
-* Test on FPGA  (works , with simplified program. Need a way to program without using
-switches)
 
 * Test Program
 ```
@@ -119,4 +106,4 @@ switches)
 Output is at F0, should be 78 decimal
 F1 should be 10
 
-Still doesn't test everything, but good enough for this project.
+Still doesn't test everything, but good enough for this project.  A shorter (and easier to enter) program is also provided.

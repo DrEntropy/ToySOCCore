@@ -26,6 +26,13 @@ use IEEE.STD_LOGIC_1164.all;
 USE IEEE.Numeric_Std.ALL;
 use IEEE.std_logic_textio.all;
 use std.textio.all;
+-- simple interface
+-- DataOut and DataAddr reflect the current ouput from the memory
+-- at the currently selected address.
+-- When 'Stop' is one, reset is held high (to keep the program from executing
+-- end the Takeover mode is set, so that CPAddr controls the memory address,
+-- CPDataIn goes into the memory when Write is high during rising edge.
+
 
 entity TOYCore is
    Port (Clk,Run,Stop,Write : in std_logic;

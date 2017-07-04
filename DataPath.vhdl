@@ -41,14 +41,20 @@ entity DataPath is
      -- ALU Control, see ALU.vhdl
     ALUOp: in std_logic_vector(2 downto 0);
     PCInc : in std_logic;
-     -- Write enables
 
+
+-- Write enables
+
+      -- Memory
        MemWE: in std_logic;
+      -- Register File
        RFWE: in std_logic;
+      -- The two parts of the instruction register
        IRHWE,IRLWE: in std_logic;
+      -- Program counter
        PCWE: in std_logic;
 
-    -- MUX Control signals
+-- MUX Control signals
 
      -- 00: Memout, 01: ALU out, 10: IRL, 11: PC AddressOut
      RFInSel : in std_logic_vector(1 downto 0);
@@ -64,7 +70,7 @@ entity DataPath is
 
 
 
-     -- For the control panel
+  -- For the control panel (switches)
     CPAddr  : in std_logic_vector(7 downto 0);
     CPDataIn  : in std_logic_vector(7 downto 0);
 
